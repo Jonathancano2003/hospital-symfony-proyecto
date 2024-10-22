@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\NursesRepository;
 use PhpParser\Node\Name;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,17 +18,17 @@ class NurseController extends AbstractController
         {"user":"Aharon","password":"zE4)U\'ptR"},
         {"user":"Ardath","password":"eE3/}$}Fh5"},
         {"user":"Cyrill","password":"pQ7?\'1+$<l"}]';
-        
+
         return json_decode($jsonData, true); // Corrección aquí
     }
-    
+
     #[Route(path: '/index', name: 'app_nurse_getAll')]
     public function getAll(): JsonResponse
     {
         $credenciales = $this->allNurses();
         return $this->json($credenciales);
     }
-    
+
 
     #[Route('/nurse/login', name: 'app_nurse_login')]
     public function index(): Response
@@ -59,22 +60,20 @@ class NurseController extends AbstractController
         }
     }
     #[Route('/name/{name}', name: 'nurse_list_name', methods: ['GET'])]
-    public function findByName(string $name): JsonResponse
+    public function findByName(string $name, NursesRepository $NursesRepository): JsonResponse
     {
-
-        $nurses = $this->allNurses();
-
-        $return_nurses = [];
-
-
-        foreach ($nurses as $nurse) {
-            if ($nurse['user'] === $name) {
-                $return_nurses[] = ['user' => $nurse['user'], 'password' => $nurse['password']];
-                return new JsonResponse($return_nurses, JsonResponse::HTTP_OK);
-            }
+        $nurse = $NursesRepository->findOneByName($name);
+    
+        if (!$nurse) {
+            return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
         }
-
-
-        return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
+    
+        $nurseData = [
+            'user' => $nurse->getUser(),
+            'password' => $nurse->getPassword(),
+        ];
+    
+        return new JsonResponse($nurseData, JsonResponse::HTTP_OK);
     }
+    
 }
