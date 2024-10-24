@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
+#[Route(path: '/nurse', name: 'nurses')]
 class NurseController extends AbstractController
 {
    
@@ -34,17 +35,18 @@ class NurseController extends AbstractController
     { {
             $name = $request->request->get('nombre');
             $pass = $request->request->get( 'pass');
+            if(isset($name) && isset($pass)){
             $correcto = false;
           
-
             $nurse = $nursesRepository->nurseLogin($name, $pass);
             
-
-          
             if($nurse){
                 $correcto = true;
             }
             return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
+            }else{
+                return new JsonResponse(["login" => false], Response::HTTP_OK);
+            }
         }
     }
     #[Route('/name/{name}', name: 'nurse_list_name', methods: ['GET'])]
