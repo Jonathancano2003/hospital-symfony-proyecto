@@ -31,6 +31,24 @@ class NursesRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+public function getAll(): array
+    {
+        return $this->createQueryBuilder('n')
+            ->getQuery()
+            ->getResult();
+    }
+
+public function nurseLogin(string $name, string $pass) :array{
+    return $this->createQueryBuilder("n")
+    ->andWhere('n.name = :name', 'n.pass = :pass')
+        ->setParameter('name', $name)
+        ->setParameter('pass', $pass)
+        ->orderBy('n.id', 'ASC')
+        ->getQuery()
+        ->getResult()
+    ;
+}
+
 public function findOneByName(string $name): ?Nurses
 {
     return $this->createQueryBuilder('n')

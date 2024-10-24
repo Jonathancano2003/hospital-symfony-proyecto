@@ -23,40 +23,48 @@ class NurseController extends AbstractController
     }
 
     #[Route(path: '/index', name: 'app_nurse_getAll')]
-    public function getAll(): JsonResponse
+    public function getAllNurses(NursesRepository $nRepository): JsonResponse
     {
-        $credenciales = $this->allNurses();
-        return $this->json($credenciales);
+        $nurses = $nRepository->getAll();
+        foreach ($nurses as $nurse) {
+            $nursesArray[] = [
+                'id' => $nurse->getId(),
+                'user' => $nurse->getUser(),
+                'pass' => $nurse->getPassword(),
+            ];
+        }
+        return new JsonResponse($nursesArray, JsonResponse::HTTP_OK);
     }
 
 
-    #[Route('/nurse/login', name: 'app_nurse_login')]
-    public function index(): Response
+    #[Route('/login', name: 'app_nurse_login', methods:["POST"])]
+    public function nurseLogin(Request $request, NursesRepository $nursesRepository): JsonResponse
     { {
+            $name = $request->request->get('nombre');
+            $pass = $request->request->get( 'pass');
             $correcto = false;
-            $users = $this->allNurses();
+            $nurses = $this->allNurses();
 
-            if (isset($_POST["nombre"]) && isset($_POST["pass"])) {
-                $nombre = "Antonio";
-                $pass = "12345678";
-                for ($i = 0; $i < count($users); $i++) {
-                    $nombre = $users[$i]["user"];
-                    $pass = $users[$i]["password"];
-                    if ($_POST["nombre"] == $nombre && $pass == $_POST["pass"]) {
-                        $correcto = true;
-                        break;
-                    }
-                }
-                if ($correcto == false) {
-                    echo "Credenciales incorrectos";
-                } else {
-                    echo "Credenciales correctos";
-                }
-            } else {
-                echo "No se han proporcionado datos suficientes";
+            $nurse = $nursesRepository->nurseLogin($name, $pass);
+            
+
+            // if (isset($name) && isset($pass)) {
+            //     for ($i = 0; $i < count($nurses); $i++) {
+            //         $NurseName = $nurses[$i]["user"];
+            //         $NursePass = $nurses[$i]["password"];
+            //         if ($name == $NurseName && $pass == $NursePass) {
+            //             $correcto = true;
+            //             break;
+            //         }
+            //     }
+            //     return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
+            // } else {
+            //     return new JsonResponse(["login" => "Credential Missing"], Response::HTTP_OK);
+            // }
+            if($nurse){
+                $correcto = true;
             }
-
-            return new Response($correcto, Response::HTTP_OK);
+            return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
         }
     }
     #[Route('/name/{name}', name: 'nurse_list_name', methods: ['GET'])]
