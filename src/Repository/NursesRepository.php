@@ -40,7 +40,7 @@ public function getAll(): array
 
 public function nurseLogin(string $name, string $pass) :array{
     return $this->createQueryBuilder("n")
-    ->andWhere('n.name = :name', 'n.pass = :pass')
+    ->andWhere('n.user = :name', 'n.password = :pass')
         ->setParameter('name', $name)
         ->setParameter('pass', $pass)
         ->orderBy('n.id', 'ASC')
