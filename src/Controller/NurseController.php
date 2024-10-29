@@ -26,7 +26,7 @@ class NurseController extends AbstractController
                 'pass' => $nurse->getPassword(),
             ];
         }
-        return new JsonResponse($nursesArray, JsonResponse::HTTP_OK);
+        return new JsonResponse($nursesArray, Response::HTTP_OK);
     }
 
 
