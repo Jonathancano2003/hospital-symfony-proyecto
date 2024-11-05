@@ -50,11 +50,17 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_nurses_show', methods: ['GET'])]
-    public function show(Nurses $nurse): Response
+    public function show(int $id, NursesRepository $nursesRepository): Response
     {
-        return $this->render('nurses/show.html.twig', [
-            'nurse' => $nurse,
-        ]);
+        $nurse = $nursesRepository->findOneById($id);
+        if (!$nurse) {
+            return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+        $arrayNurse = [
+            'user' => $nurse->getUser(),
+            'password' => $nurse->getPassword(),
+        ];
+        return new JsonResponse($arrayNurse, Response::HTTP_OK);
     }
 
     #[Route('/{id}/edit', name: 'app_nurses_edit', methods: ['GET', 'POST'])]
