@@ -49,7 +49,7 @@ final class NursesController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_nurses_show', methods: ['GET'])]
+    #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
     public function show(int $id, NursesRepository $nursesRepository): Response
     {
         $nurse = $nursesRepository->findOneById($id);

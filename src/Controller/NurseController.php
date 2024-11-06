@@ -13,8 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route(path: '/nurse', name: 'nurses')]
 class NurseController extends AbstractController
 {
-   
-
     #[Route(path: '/index', name: 'app_nurse_getAll')]
     public function getAllNurses(NursesRepository $nRepository): JsonResponse
     {
