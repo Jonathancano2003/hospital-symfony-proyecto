@@ -29,24 +29,11 @@ final class NursesController extends AbstractController
         return new JsonResponse($nursesArray, Response::HTTP_OK);
     }
 
-    #[Route('/new', name: 'app_nurses_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
+    public function new(Request $request, NursesRepository $nursesRepository): Response
     {
-        $nurse = new Nurses();
-        $form = $this->createForm(NursesType::class, $nurse);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($nurse);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_nurses_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('nurses/new.html.twig', [
-            'nurse' => $nurse,
-            'form' => $form,
-        ]);
+        
+        return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
     }
 
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
