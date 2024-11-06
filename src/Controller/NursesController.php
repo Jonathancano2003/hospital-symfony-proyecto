@@ -63,7 +63,7 @@ final class NursesController extends AbstractController
         return new JsonResponse($arrayNurse, Response::HTTP_OK);
     }
 
-    #[Route('/{id}/edit', name: 'app_nurses_edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(NursesType::class, $nurse);
@@ -81,7 +81,7 @@ final class NursesController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_nurses_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['POST'])]
     public function delete(Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$nurse->getId(), $request->getPayload()->getString('_token'))) {
