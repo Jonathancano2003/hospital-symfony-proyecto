@@ -32,10 +32,12 @@ final class NursesController extends AbstractController
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
     public function new(Request $request, NursesRepository $nursesRepository): Response
     {
-        
+        $name = $request->get('nombre');
+        $pass = $request->get('pass');
+        $nursesRepository->nurseRegister($name,$pass);
         return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
     }
-
+    
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
     public function show(int $id, NursesRepository $nursesRepository): Response
     {

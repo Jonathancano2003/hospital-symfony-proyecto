@@ -49,6 +49,19 @@ public function nurseLogin(string $name, string $pass) :array{
     ;
 }
 
+public function nurseRegister(string $name, string $pass): void {
+    //Utilizo la funcion getEntityManager que servira para gestionar la entidad y subirla
+    $entityManager = $this->getEntityManager();
+    //Creo la entidad Nurses y le asigno el nombre y contraseña
+    $nurse = new Nurses;
+    $nurse->setUser($name);
+    $nurse->setPassword($pass);
+ 
+    //Estas dos funciones seran las que crearan la entidad y la subiran a la base de datos
+    $entityManager->persist($nurse);
+    $entityManager->flush();
+}
+
 public function findOneByName(string $name): ?Nurses
 {
     return $this->createQueryBuilder('n')
