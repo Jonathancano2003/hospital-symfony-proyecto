@@ -32,7 +32,7 @@ final class NursesController extends AbstractController
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
     public function new(Request $request, NursesRepository $nursesRepository): Response
     {
-        
+
         return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
     }
 
@@ -69,13 +69,17 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['POST'])]
-    public function delete(Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
+    public function delete(EntityManagerInterface $entityManager, int $id): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$nurse->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($nurse);
-            $entityManager->flush();
+        $nurse = $entityManager->getRepository(Nurses::class)->find($id);
+
+        if (!$nurse) {
+            return new JsonResponse(['error' => 'Nurse not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->redirectToRoute('app_nurses_index', [], Response::HTTP_SEE_OTHER);
+        $entityManager->remove($nurse);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Nurse deleted successfully'], Response::HTTP_OK);
     }
 }
