@@ -32,10 +32,13 @@ final class NursesController extends AbstractController
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
     public function new(Request $request, NursesRepository $nursesRepository): Response
     {
+        $name = $request->get('nombre');
+        $pass = $request->get('pass');
+        $nursesRepository->nurseRegister($name,$pass);
 
         return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
     }
-
+    
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
     public function show(int $id, NursesRepository $nursesRepository): Response
     {
@@ -50,22 +53,34 @@ final class NursesController extends AbstractController
         return new JsonResponse($arrayNurse, Response::HTTP_OK);
     }
 
-    #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
+    #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
+    public function edit($id, Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(NursesType::class, $nurse);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+        $nurseId = $entityManager->getRepository(Nurses::class)->find($id);
+        $data = json_decode($request->getContent(), true);
 
-            return $this->redirectToRoute('app_nurses_index', [], Response::HTTP_SEE_OTHER);
-        }
+        $nurseId->setUser($data["user"]);
+        $nurseId->setPassword($data["pass"]);
 
-        return $this->render('nurses/edit.html.twig', [
-            'nurse' => $nurse,
-            'form' => $form,
-        ]);
+        $entityManager->persist($nurseId);
+        $entityManager->flush();
+
+        return new JsonResponse(["nurse" => "modified"]);
+
+        // $form = $this->createForm(NursesType::class, $nurse);
+        // $form->handleRequest($request);
+
+        // if ($form->isSubmitted() && $form->isValid()) {
+        //     $entityManager->flush();
+
+        //     return $this->redirectToRoute('app_nurses_index', [], Response::HTTP_SEE_OTHER);
+        // }
+
+        // return $this->render('nurses/edit.html.twig', [
+        //     'nurse' => $nurse,
+        //     'form' => $form,
+        // ]);
     }
 
     #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['POST'])]
