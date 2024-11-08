@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class NursesController extends AbstractController
 {
     #[Route('/index', name: 'app_nurses_index', methods: ['GET'])]
-    public function index(NursesRepository $nursesRepository): Response
+    public function index(NursesRepository $nursesRepository): JsonResponse
     {
         $nurses = $nursesRepository->getAll();
         foreach ($nurses as $nurse) {
@@ -30,19 +30,24 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
-    public function new(Request $request, NursesRepository $nursesRepository): Response
+    public function new(Request $request, NursesRepository $nursesRepository): JsonResponse
     {
         $name = $request->get('name');
         $pass = $request->get('pass');
-        $nursesRepository->nurseRegister($name,$pass);
+        $pass = $request->get('pass');
 
-        return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
+        if (preg_match('/^(?=.*\d)(?=.*[\W_]).{6,}$/', $pass)) {
+            $nursesRepository->nurseRegister($name, $pass);
+            return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(["Register" => "Failure: Invalid password"], Response::HTTP_OK);
     }
-    
+
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
-    public function show(int $id, NursesRepository $nursesRepository): Response
+    public function show(int $id, EntityManagerInterface $function): JsonResponse
     {
-        $nurse = $nursesRepository->findOneById($id);
+        $nurse = $function->getRepository(Nurses::class)->find($id);
         if (!$nurse) {
             return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -55,6 +60,7 @@ final class NursesController extends AbstractController
 
     #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
     public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): Response
+
     {
 
         $nurseId = $entityManager->getRepository(Nurses::class)->find($id);
@@ -70,24 +76,10 @@ final class NursesController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(["nurse" => "modified"]);
-
-        // $form = $this->createForm(NursesType::class, $nurse);
-        // $form->handleRequest($request);
-
-        // if ($form->isSubmitted() && $form->isValid()) {
-        //     $entityManager->flush();
-
-        //     return $this->redirectToRoute('app_nurses_index', [], Response::HTTP_SEE_OTHER);
-        // }
-
-        // return $this->render('nurses/edit.html.twig', [
-        //     'nurse' => $nurse,
-        //     'form' => $form,
-        // ]);
     }
 
-    #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['POST'])]
-    public function delete(EntityManagerInterface $entityManager, int $id): Response
+    #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['DELETE'])]
+    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
     {
         $nurse = $entityManager->getRepository(Nurses::class)->find($id);
 

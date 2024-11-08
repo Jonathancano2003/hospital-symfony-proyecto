@@ -71,13 +71,4 @@ public function findOneByName(string $name): ?Nurses
         ->getOneOrNullResult();
 }
 
-public function findOneById(int $id): ?Nurses
-{
-    return $this->createQueryBuilder('n')
-        ->andWhere('n.id = :id')
-        ->setParameter('id', $id)
-        ->getQuery()
-        ->getOneOrNullResult();
-}
-
 }
