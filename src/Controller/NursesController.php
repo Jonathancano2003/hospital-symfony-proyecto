@@ -40,9 +40,9 @@ final class NursesController extends AbstractController
     }
     
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
-    public function show(int $id, NursesRepository $nursesRepository): JsonResponse
+    public function show(int $id, EntityManagerInterface $function): JsonResponse
     {
-        $nurse = $nursesRepository->findOneById($id);
+        $nurse = $function->getRepository(Nurses::class)->find($id);
         if (!$nurse) {
             return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
         }
