@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/nurses')]
 final class NursesController extends AbstractController
 {
-    #[Route(name: 'app_nurses_index', methods: ['GET'])]
+    #[Route('/index', name: 'app_nurses_index', methods: ['GET'])]
     public function index(NursesRepository $nursesRepository): Response
     {
         $nurses = $nursesRepository->getAll();
@@ -32,7 +32,7 @@ final class NursesController extends AbstractController
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
     public function new(Request $request, NursesRepository $nursesRepository): Response
     {
-        $name = $request->get('nombre');
+        $name = $request->get('name');
         $pass = $request->get('pass');
         $nursesRepository->nurseRegister($name,$pass);
 
