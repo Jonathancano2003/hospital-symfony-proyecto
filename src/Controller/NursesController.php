@@ -54,10 +54,13 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
-    public function edit($id, Request $request, Nurses $nurse, EntityManagerInterface $entityManager): Response
+    public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): Response
     {
 
         $nurseId = $entityManager->getRepository(Nurses::class)->find($id);
+        if(!$nurseId){
+            return new JsonResponse(["Nurse" => "Not Found"]);
+        }
         $data = json_decode($request->getContent(), true);
 
         $nurseId->setUser($data["user"]);
