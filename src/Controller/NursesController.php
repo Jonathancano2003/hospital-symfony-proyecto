@@ -34,11 +34,16 @@ final class NursesController extends AbstractController
     {
         $name = $request->get('name');
         $pass = $request->get('pass');
-        $nursesRepository->nurseRegister($name,$pass);
+        $pass = $request->get('pass');
 
-        return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
+        if (preg_match('/^(?=.*\d)(?=.*[\W_]).{6,}$/', $pass)) {
+            $nursesRepository->nurseRegister($name, $pass);
+            return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(["Register" => "Failure: Invalid password"], Response::HTTP_OK);
     }
-    
+
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
     public function show(int $id, EntityManagerInterface $function): JsonResponse
     {
