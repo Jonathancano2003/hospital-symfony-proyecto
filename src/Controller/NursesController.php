@@ -34,7 +34,6 @@ final class NursesController extends AbstractController
     {
         $name = $request->get('name');
         $pass = $request->get('pass');
-        $pass = $request->get('pass');
 
         if (preg_match('/^(?=.*\d)(?=.*[\W_]).{6,}$/', $pass)) {
             $nursesRepository->nurseRegister($name, $pass);
@@ -59,7 +58,7 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
-    public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): Response
+    public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): JsonResponse
 
     {
 
