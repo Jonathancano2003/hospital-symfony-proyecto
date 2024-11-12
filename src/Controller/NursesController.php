@@ -19,6 +19,7 @@ final class NursesController extends AbstractController
     public function index(NursesRepository $nursesRepository): JsonResponse
     {
         $nurses = $nursesRepository->getAll();
+        $nursesArray = [];
         foreach ($nurses as $nurse) {
             $nursesArray[] = [
                 'id' => $nurse->getId(),
@@ -58,20 +59,18 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
-    public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): JsonResponse
-
+    public function edit($id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-
-        $nurseId = $entityManager->getRepository(Nurses::class)->find($id);
-        if(!$nurseId){
+        $nurse = $entityManager->getRepository(Nurses::class)->find($id);
+        if (!$nurse) {
             return new JsonResponse(["Nurse" => "Not Found"]);
         }
         $data = json_decode($request->getContent(), true);
 
-        $nurseId->setUser($data["user"]);
-        $nurseId->setPassword($data["pass"]);
+        $nurse->setUser($data["user"]);
+        $nurse->setPassword($data["pass"]);
 
-        $entityManager->persist($nurseId);
+        $entityManager->persist($nurse);
         $entityManager->flush();
 
         return new JsonResponse(["nurse" => "modified"]);
@@ -90,5 +89,37 @@ final class NursesController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Nurse deleted successfully'], Response::HTTP_OK);
+    }
+
+    #[Route('/login', name: 'app_nurse_login', methods: ['POST'])]
+    public function nurseLogin(Request $request, NursesRepository $nursesRepository): JsonResponse
+    {
+        $name = $request->request->get('nombre');
+        $pass = $request->request->get('pass');
+
+        if (isset($name) && isset($pass)) {
+            $nurse = $nursesRepository->nurseLogin($name, $pass);
+            $correcto = $nurse ? true : false;
+            return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
+        } else {
+            return new JsonResponse(["login" => false], Response::HTTP_OK);
+        }
+    }
+
+    #[Route('/name/{name}', name: 'nurse_list_name', methods: ['GET'])]
+    public function findByName(string $name, NursesRepository $nursesRepository): JsonResponse
+    {
+        $nurse = $nursesRepository->findOneByName($name);
+
+        if (!$nurse) {
+            return new JsonResponse(['error' => 'Nurse not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $nurseData = [
+            'user' => $nurse->getUser(),
+            'password' => $nurse->getPassword(),
+        ];
+
+        return new JsonResponse($nurseData, JsonResponse::HTTP_OK);
     }
 }
