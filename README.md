@@ -29,7 +29,7 @@ Open the folder using Visual Studio Code which contains all the files
 
 Our program requires composer in order to work
 Execute the following command using either the VSC terminal or Windows Power Shell
-Note: This requires composer to be installed previously for more infomation see: https://getcomposer.org/
+Note: This requires [composer](https://getcomposer.org/) to be installed previously<br>
 Also make sure to be executing the command at the folder which contains all the files
 ```sh
 composer install
@@ -63,6 +63,6 @@ After this step you can add as many nurses as you like.
 ### Download Postman
 Our project has not front-end, so we need a software which sends requests, in our case, we used Postman.
 You have two ways to download Postman
-<br>1: As a software, for this installation check https://www.postman.com/
+<br>1: As a software, for this installation check [Postman oficial site](https://www.postman.com/)
 <br>2: As a VSC extension search "Postman.postman-for-vscode" at VSC extensions and it will show you
 After the installation you are asked to create an account
