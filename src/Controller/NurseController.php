@@ -43,7 +43,7 @@ class NurseController extends AbstractController
             }
             return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
             }else{
-                return new JsonResponse(["login" => false], Response::HTTP_OK);
+                return new JsonResponse(["login" => false], Response::HTTP_UNAUTHORIZED);
             }
         }
     }
