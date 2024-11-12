@@ -44,8 +44,8 @@ After this step you can add as many nurses as you like.
 ### Download Postman
 Our project has not front-end, so we need a software which sends requests, in our case, we used Postman.
 You have two ways to download Postman
-1: As a software, for this installation check https://www.postman.com/
-2: As a VSC extension search "Postman.postman-for-vscode" at VSC extensions and it will show you
+<br>1: As a software, for this installation check https://www.postman.com/
+<br>2: As a VSC extension search "Postman.postman-for-vscode" at VSC extensions and it will show you
 After the installation you are asked to create an account
 
 
