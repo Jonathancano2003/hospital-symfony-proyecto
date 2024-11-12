@@ -74,7 +74,7 @@ final class NursesController extends AbstractController
         $entityManager->persist($nurseId);
         $entityManager->flush();
 
-        return new JsonResponse(["nurse" => "modified"]);
+        return new JsonResponse(["nurse" => "modified"], Response::HTTP_OK);
     }
 
     #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['DELETE'])]
