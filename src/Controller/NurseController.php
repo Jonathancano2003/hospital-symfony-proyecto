@@ -66,6 +66,8 @@ class NurseController extends AbstractController
         return new JsonResponse($nurseData, JsonResponse::HTTP_OK);
     }
 
+    //CRUD-------
+
     #[Route('/index', name: 'app_nurses_index', methods: ['GET'])]
     public function index(NursesRepository $nursesRepository): JsonResponse
     {
@@ -108,11 +110,9 @@ class NurseController extends AbstractController
         return new JsonResponse($arrayNurse, Response::HTTP_OK);
     }
 
-    #[Route('/edit/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
+    #[Route('/{id}', name: 'app_nurses_edit', methods: ['PUT'])]
     public function edit($id, Request $request, Nurses $nurseId = null, EntityManagerInterface $entityManager): JsonResponse
-
     {
-
         $nurseId = $entityManager->getRepository(Nurses::class)->find($id);
         if(!$nurseId){
             return new JsonResponse(["Nurse" => "Not Found"]);
@@ -128,7 +128,7 @@ class NurseController extends AbstractController
         return new JsonResponse(["nurse" => "modified"], Response::HTTP_OK);
     }
 
-    #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_nurses_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
     {
         $nurse = $entityManager->getRepository(Nurses::class)->find($id);
