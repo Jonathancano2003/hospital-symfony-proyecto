@@ -66,3 +66,103 @@ You have two ways to download Postman
 <br>1: As a software, for this installation check [Postman oficial site](https://www.postman.com/)
 <br>2: As a VSC extension search "Postman.postman-for-vscode" at VSC extensions and it will show you
 After the installation you are asked to create an account
+
+# Usage
+-----
+
+### Running the Application
+
+1.  Clone the project locally by running:
+    
+        git clone https://github.com/Jonathancano2003/hospital-symfony-proyecto.git
+        cd hospital-symfony-proyecto
+            
+    
+2.  Install all required dependencies using Composer:
+    
+        composer install
+    
+3.  Update the `.env` file with your database credentials:
+    
+        DATABASE_URL="mysql://username:password@127.0.0.1:3306/hospital_database"
+    
+4.  Create the database and run migrations to set up the necessary tables:
+    
+        php bin/console doctrine:database:create
+        php bin/console doctrine:migrations:migrate
+    
+5.  Run the Symfony development server to access the application:
+    
+        symfony server:start
+    
+    The application should now be accessible at `http://localhost:8000`.
+    
+
+### API Functionalities and Examples
+
+The application includes key functionalities accessible through API endpoints. Here are examples of the main functionalities:
+
+#### Retrieve All Nurses
+
+**Endpoint**: `/api/nurses`  
+**Method**: `GET`  
+**Description**: Returns a list of all nurses in JSON format.
+
+**Example Request**:
+
+    curl -X GET http://localhost:8000/api/nurses
+
+#### Nurse Login
+
+**Endpoint**: `/api/nurses/login`  
+**Method**: `POST`  
+**Description**: Allows a nurse to log in with email and password.
+
+**Example Request**:
+
+    curl -X POST http://localhost:8000/api/nurses/login -d "email=nurse@example.com&password=yourpassword"
+
+#### Find Nurse by Name
+
+**Endpoint**: `/api/nurses/find/{name}`  
+**Method**: `GET`  
+**Description**: Searches for a nurse by name and returns their details.
+
+**Example Request**:
+
+    curl -X GET http://localhost:8000/api/nurses/find/JaneDoe
+
+#### Create a New Nurse
+
+**Endpoint**: `/api/nurses/new`  
+**Method**: `POST`  
+**Description**: Creates a new nurse with the provided details.
+
+**Example Request**:
+
+    curl -X POST http://localhost:8000/api/nurses/new -d "name=Jane Doe&email=jane.doe@example.com&password=123456"
+
+#### Update Nurse Information
+
+**Endpoint**: `/api/nurses/{id}/edit`  
+**Method**: `PUT`  
+**Description**: Updates the information of a specific nurse by ID.
+
+**Example Request**:
+
+    curl -X PUT http://localhost:8000/api/nurses/1/edit -d "email=newemail@example.com"
+
+#### Delete a Nurse
+
+**Endpoint**: `/api/nurses/{id}/delete`  
+**Method**: `DELETE`  
+**Description**: Deletes a nurse record by ID.
+
+**Example Request**:
+
+    curl -X DELETE http://localhost:8000/api/nurses/1/delete
+
+### Notes
+
+*   Use tools like [Postman](https://www.postman.com/) to easily test these API endpoints.
+*   Ensure the Symfony server is running before making API requests.
