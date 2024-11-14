@@ -72,26 +72,8 @@ After the installation you are asked to create an account
 
 ### Running the Application
 
-1.  Clone the project locally by running:
-    
-        git clone https://github.com/Jonathancano2003/hospital-symfony-proyecto.git
-        cd hospital-symfony-proyecto
-            
-    
-2.  Install all required dependencies using Composer:
-    
-        composer install
-    
-3.  Update the `.env` file with your database credentials:
-    
-        DATABASE_URL="mysql://username:password@127.0.0.1:3306/hospital_database"
-    
-4.  Create the database and run migrations to set up the necessary tables:
-    
-        php bin/console doctrine:database:create
-        php bin/console doctrine:migrations:migrate
-    
-5.  Run the Symfony development server to access the application:
+
+ Run the Symfony development server to access the application:
     
         symfony server:start
     
@@ -164,5 +146,4 @@ The application includes key functionalities accessible through API endpoints. H
 
 ### Notes
 
-*   Use tools like [Postman](https://www.postman.com/) to easily test these API endpoints.
 *   Ensure the Symfony server is running before making API requests.
