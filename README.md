@@ -27,7 +27,7 @@ Open the folder using Visual Studio Code which contains all the files
 
 ### Install dependencies
 
-Our program requires composer in order to work
+Our program requires composer in order to work <br>
 Execute the following command using either the VSC terminal or Windows Power Shell
 Note: This requires [composer](https://getcomposer.org/) to be installed previously<br>
 Also make sure to be executing the command at the folder which contains all the files
