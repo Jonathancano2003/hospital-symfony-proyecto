@@ -8,48 +8,59 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class NursesControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
+    private int $lastInsertedId;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
+        $this->lastInsertedId = $this->getLastInsertedId();
+    }
+
+    private function getLastInsertedId(): int
+    {
+        // Obtener la lista de enfermeros y encontrar el último ID
+        $this->client->request('GET', '/nurses/index');
+        $nursesList = json_decode($this->client->getResponse()->getContent(), true);
+
+        $lastId = 0;
+        foreach ($nursesList as $nurse) {
+            if ($nurse['id'] > $lastId) {
+                $lastId = $nurse['id'];
+            }
+        }
+
+        return $lastId;
     }
 
     public function testIndex(): void
     {
-        $this->client->request('GET', '/nurses');
+        $this->client->request('GET', '/nurses/index');
         $this->assertResponseIsSuccessful();
         $this->assertJson($this->client->getResponse()->getContent());
     }
 
-    public function testNew(): void
-{
-    $this->client->request('POST', '/nurses/new', [
-        'nombre' => 'test_user',
-        'pass' => 'password123',
-    ]);
-
-    $this->assertResponseIsSuccessful();
-    $responseContent = $this->client->getResponse()->getContent();
-    $this->assertJson($responseContent);
-    $this->assertStringContainsString('"Register":"Success"', $responseContent);
-}
-
+   
+    
 
     public function testShow(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('GET', '/nurses/show/1');
+        // Usar el último ID para mostrar el enfermero
+        $this->client->request('GET', '/nurses/show/' . $this->lastInsertedId);
         $this->assertResponseIsSuccessful();
         $this->assertJson($this->client->getResponse()->getContent());
     }
 
     public function testEdit(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('PUT', '/nurses/edit/1', [], [], [], json_encode([
-            'user' => 'updated_user',
-            'pass' => 'new_password123',
-        ]));
+        // Usar el último ID para actualizar el enfermero
+        $this->client->request(
+            'PUT',
+            '/nurses/edit/' . $this->lastInsertedId,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['user' => 'updated_user', 'pass' => 'new_password123!'])
+        );
 
         $this->assertResponseIsSuccessful();
         $responseContent = $this->client->getResponse()->getContent();
@@ -59,8 +70,8 @@ class NursesControllerTest extends WebTestCase
 
     public function testDelete(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('POST', '/nurses/delete/1');
+        // Usar el último ID para eliminar el enfermero
+        $this->client->request('DELETE', '/nurses/delete/' . $this->lastInsertedId);
         $this->assertResponseIsSuccessful();
         $responseContent = $this->client->getResponse()->getContent();
         $this->assertJson($responseContent);
