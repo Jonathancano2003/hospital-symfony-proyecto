@@ -7,15 +7,47 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class NursesControllerTest extends WebTestCase
 {
+<<<<<<< HEAD
     public function testIndex(): void
     {
         $client = static::createClient();
         $client->request('GET', '/nurses/index');
 
+=======
+    private KernelBrowser $client;
+    private int $lastInsertedId;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+        $this->lastInsertedId = $this->getLastInsertedId();
+    }
+
+    private function getLastInsertedId(): int
+    {
+        // Obtener la lista de enfermeros y encontrar el último ID
+        $this->client->request('GET', '/nurse/index');
+        $nursesList = json_decode($this->client->getResponse()->getContent(), true);
+
+        $lastId = 0;
+        foreach ($nursesList as $nurse) {
+            if ($nurse['id'] > $lastId) {
+                $lastId = $nurse['id'];
+            }
+        }
+
+        return $lastId;
+    }
+
+    public function testIndex(): void
+    {
+        $this->client->request('GET', '/nurse/index');
+>>>>>>> d6409850eeea35201c54532e3e474ce7a1d1b812
         $this->assertResponseIsSuccessful();
         $this->assertJson($client->getResponse()->getContent());
     }
 
+<<<<<<< HEAD
     public function testShow(): void
     {
         $client = static::createClient();
@@ -35,6 +67,15 @@ class NursesControllerTest extends WebTestCase
         $client->request('GET', '/nurses/show/' . $id);
 
         // Verificamos la respuesta
+=======
+   
+    
+
+    public function testShow(): void
+    {
+        // Usar el último ID para mostrar el enfermero
+        $this->client->request('GET', '/nurse/show/' . $this->lastInsertedId);
+>>>>>>> d6409850eeea35201c54532e3e474ce7a1d1b812
         $this->assertResponseIsSuccessful();
         $this->assertJson($client->getResponse()->getContent());
         $this->assertStringContainsString('DirectInsertUser', $client->getResponse()->getContent());
@@ -42,7 +83,19 @@ class NursesControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
+<<<<<<< HEAD
         $client = static::createClient();
+=======
+        // Usar el último ID para actualizar el enfermero
+        $this->client->request(
+            'PUT',
+            '/nurse/{id}' . $this->lastInsertedId,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['user' => 'updated_user', 'pass' => 'new_password123!'])
+        );
+>>>>>>> d6409850eeea35201c54532e3e474ce7a1d1b812
 
         // Insertar un registro directamente en la base de datos
         $entityManager = self::getContainer()->get('doctrine')->getManager();
@@ -67,11 +120,18 @@ class NursesControllerTest extends WebTestCase
 
         // Verificamos la respuesta
         $this->assertResponseIsSuccessful();
+<<<<<<< HEAD
         $this->assertStringContainsString('modified', $client->getResponse()->getContent());
+=======
+        $responseContent = $this->client->getResponse()->getContent();
+        $this->assertJson($responseContent);
+        
+>>>>>>> d6409850eeea35201c54532e3e474ce7a1d1b812
     }
 
     public function testDelete(): void
     {
+<<<<<<< HEAD
         $client = static::createClient();
 
         // Insertar un registro directamente en la base de datos
@@ -89,6 +149,10 @@ class NursesControllerTest extends WebTestCase
         $client->request('DELETE', '/nurses/delete/' . $id);
 
         // Verificamos la respuesta
+=======
+        // Usar el último ID para eliminar el enfermero
+        $this->client->request('DELETE', '/nurse/' . $this->lastInsertedId);
+>>>>>>> d6409850eeea35201c54532e3e474ce7a1d1b812
         $this->assertResponseIsSuccessful();
         $this->assertStringContainsString('deleted', $client->getResponse()->getContent());
     }
