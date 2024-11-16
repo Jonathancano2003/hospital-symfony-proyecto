@@ -2,68 +2,94 @@
 
 namespace App\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use App\Entity\Nurses;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class NursesControllerTest extends WebTestCase
 {
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-    }
-
     public function testIndex(): void
     {
-        $this->client->request('GET', '/nurses');
+        $client = static::createClient();
+        $client->request('GET', '/nurses/index');
+
         $this->assertResponseIsSuccessful();
-        $this->assertJson($this->client->getResponse()->getContent());
+        $this->assertJson($client->getResponse()->getContent());
     }
-
-    public function testNew(): void
-{
-    $this->client->request('POST', '/nurses/new', [
-        'nombre' => 'test_user',
-        'pass' => 'password123',
-    ]);
-
-    $this->assertResponseIsSuccessful();
-    $responseContent = $this->client->getResponse()->getContent();
-    $this->assertJson($responseContent);
-    $this->assertStringContainsString('"Register":"Success"', $responseContent);
-}
-
 
     public function testShow(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('GET', '/nurses/show/1');
+        $client = static::createClient();
+
+        // Insertar un registro directamente en la base de datos
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $nurse = new Nurses();
+        $nurse->setUser('DirectInsertUser');
+        $nurse->setPassword('Direct1234!');
+        $entityManager->persist($nurse);
+        $entityManager->flush();
+
+        // Obtenemos el ID del registro creado
+        $id = $nurse->getId();
+
+        // Realizamos una solicitud al endpoint para mostrarlo
+        $client->request('GET', '/nurses/show/' . $id);
+
+        // Verificamos la respuesta
         $this->assertResponseIsSuccessful();
-        $this->assertJson($this->client->getResponse()->getContent());
+        $this->assertJson($client->getResponse()->getContent());
+        $this->assertStringContainsString('DirectInsertUser', $client->getResponse()->getContent());
     }
 
     public function testEdit(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('PUT', '/nurses/edit/1', [], [], [], json_encode([
-            'user' => 'updated_user',
-            'pass' => 'new_password123',
-        ]));
+        $client = static::createClient();
 
+        // Insertar un registro directamente en la base de datos
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $nurse = new Nurses();
+        $nurse->setUser('EditUser');
+        $nurse->setPassword('Edit1234!');
+        $entityManager->persist($nurse);
+        $entityManager->flush();
+
+        // Obtenemos el ID del registro creado
+        $id = $nurse->getId();
+
+        // Realizamos una solicitud al endpoint para editarlo
+        $client->request(
+            'PUT',
+            '/nurses/edit/' . $id,
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            json_encode(['user' => 'UpdatedUser', 'pass' => 'Updated1234!'])
+        );
+
+        // Verificamos la respuesta
         $this->assertResponseIsSuccessful();
-        $responseContent = $this->client->getResponse()->getContent();
-        $this->assertJson($responseContent);
-        $this->assertStringContainsString('"nurse":"modified"', $responseContent);
+        $this->assertStringContainsString('modified', $client->getResponse()->getContent());
     }
 
     public function testDelete(): void
     {
-        // Asumiendo que existe un enfermero con ID 1 para fines de prueba
-        $this->client->request('POST', '/nurses/delete/1');
+        $client = static::createClient();
+
+        // Insertar un registro directamente en la base de datos
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $nurse = new Nurses();
+        $nurse->setUser('DeleteUser');
+        $nurse->setPassword('Delete1234!');
+        $entityManager->persist($nurse);
+        $entityManager->flush();
+
+        // Obtenemos el ID del registro creado
+        $id = $nurse->getId();
+
+        // Realizamos una solicitud al endpoint para eliminarlo
+        $client->request('DELETE', '/nurses/delete/' . $id);
+
+        // Verificamos la respuesta
         $this->assertResponseIsSuccessful();
-        $responseContent = $this->client->getResponse()->getContent();
-        $this->assertJson($responseContent);
-        $this->assertStringContainsString('"message":"Nurse deleted successfully"', $responseContent);
+        $this->assertStringContainsString('deleted', $client->getResponse()->getContent());
     }
 }

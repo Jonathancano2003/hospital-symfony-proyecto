@@ -31,18 +31,21 @@ final class NursesController extends AbstractController
     }
 
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
-    public function new(Request $request, NursesRepository $nursesRepository): JsonResponse
-    {
-        $name = $request->get('name');
-        $pass = $request->get('pass');
+public function new(Request $request, NursesRepository $nursesRepository): JsonResponse
+{
+    $name = $request->get('name');
+    $pass = $request->get('pass');
 
-        if (preg_match('/^(?=.*\d)(?=.*[\W_]).{6,}$/', $pass)) {
-            $nursesRepository->nurseRegister($name, $pass);
-            return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
-        }
+    dump($name, $pass); 
 
-        return new JsonResponse(["Register" => "Failure: Invalid password"], Response::HTTP_OK);
+    if (preg_match('/^(?=.*\d)(?=.*[\W_]).{6,}$/', $pass)) {
+        $nursesRepository->nurseRegister($name, $pass);
+        return new JsonResponse(["Register" => "Success"], Response::HTTP_OK);
     }
+
+    return new JsonResponse(["Register" => "Failure: Invalid password"], Response::HTTP_OK);
+}
+
 
     #[Route('/show/{id}', name: 'app_nurses_show', methods: ['GET'])]
     public function show(int $id, EntityManagerInterface $function): JsonResponse
@@ -122,4 +125,10 @@ final class NursesController extends AbstractController
 
         return new JsonResponse($nurseData, JsonResponse::HTTP_OK);
     }
+    #[Route('/test', name: 'app_nurses_test', methods: ['GET'])]
+public function test(): JsonResponse
+{
+    return new JsonResponse(['message' => 'Test successful'], Response::HTTP_OK);
+}
+
 }
