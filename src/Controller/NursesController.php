@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Nurses;
-use App\Form\NursesType;
 use App\Repository\NursesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,7 +72,7 @@ final class NursesController extends AbstractController
         $entityManager->persist($nurse);
         $entityManager->flush();
 
-        return new JsonResponse(["nurse" => "modified"]);
+        return new JsonResponse(["nurse" => "modified"], Response::HTTP_OK);
     }
 
     #[Route('/delete/{id}', name: 'app_nurses_delete', methods: ['DELETE'])]
@@ -102,7 +101,7 @@ final class NursesController extends AbstractController
             $correcto = $nurse ? true : false;
             return new JsonResponse(["login" => $correcto], Response::HTTP_OK);
         } else {
-            return new JsonResponse(["login" => false], Response::HTTP_OK);
+            return new JsonResponse(["login" => false], Response::HTTP_UNAUTHORIZED);
         }
     }
 
