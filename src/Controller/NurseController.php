@@ -33,7 +33,7 @@ class NurseController extends AbstractController
     #[Route('/login', name: 'app_nurse_login', methods:["POST"])]
     public function nurseLogin(Request $request, NursesRepository $nursesRepository): JsonResponse
     { {
-            $name = $request->request->get('nombre');
+            $name = $request->request->get('name');
             $pass = $request->request->get( 'pass');
             if(isset($name) && isset($pass)){
             $correcto = false;
@@ -67,20 +67,6 @@ class NurseController extends AbstractController
     }
 
     //CRUD-------
-
-    #[Route('/index', name: 'app_nurses_index', methods: ['GET'])]
-    public function index(NursesRepository $nursesRepository): JsonResponse
-    {
-        $nurses = $nursesRepository->getAll();
-        foreach ($nurses as $nurse) {
-            $nursesArray[] = [
-                'id' => $nurse->getId(),
-                'user' => $nurse->getUser(),
-                'pass' => $nurse->getPassword(),
-            ];
-        }
-        return new JsonResponse($nursesArray, Response::HTTP_OK);
-    }
 
     #[Route('/new', name: 'app_nurses_new', methods: ['POST'])]
     public function new(Request $request, NursesRepository $nursesRepository): JsonResponse
